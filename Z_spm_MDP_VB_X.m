@@ -103,8 +103,8 @@ function [MDP] = Z_spm_MDP_VB_X(MDP,OPTIONS)
 
 % options
 %--------------------------------------------------------------------------
-try, OPTIONS.plot;  catch, OPTIONS.plot  = 0; end
-try, OPTIONS.gamma; catch, OPTIONS.gamma = 0; end
+try OPTIONS.plot;  catch, OPTIONS.plot  = 0; end
+try OPTIONS.gamma; catch, OPTIONS.gamma = 0; end
 
 % if there are multiple trials ensure that parameters are updated
 %--------------------------------------------------------------------------
@@ -117,9 +117,9 @@ if length(MDP) > 1
         % update concentration parameters
         %------------------------------------------------------------------
         if i > 1
-            try,  MDP(i).a = OUT(i - 1).a; end
-            try,  MDP(i).b = OUT(i - 1).b; end
-            try,  MDP(i).d = OUT(i - 1).d; end
+            try  MDP(i).a = OUT(i - 1).a; end
+            try  MDP(i).b = OUT(i - 1).b; end
+            try  MDP(i).d = OUT(i - 1).d; end
         end
         
         % solve this trial
@@ -319,7 +319,7 @@ for t = 1:T
     % sample outcome from true state if not specified
     %----------------------------------------------------------------------
     ind   = num2cell(s(:,t));
-    for g = 1:Ng                                                                % number of outcome factors as defined in A
+    for g = 1:Ng % number of outcome factors as defined in A
         try
             o(g,t) = MDP.o(g,t);
         catch
@@ -407,6 +407,7 @@ for t = 1:T
                 O{g,t} = MDP.mdp(t).X{i}(:,1);
             end
         end
+        
     end
     
     % generate outcomes
@@ -477,7 +478,7 @@ for t = 1:T
                         %--------------------------------------------------
                         if j <= t
                             for g = 1:Ng
-                                Aq = spm_dot(Ao{g},xq,f);
+                                Aq = spm_dot(Ao{g},xq,f); % A*o
                                 v  = v + spm_log(Aq(:));
                             end
                         end
@@ -489,8 +490,8 @@ for t = 1:T
                         % emprical priors
                         %--------------------------------------------------
                         if j < 2, v = v - qx + spm_log(D{f});                                    end
-                        if j > 1, v = v - qx + spm_log(sB{f}(:,:,V(j - 1,k,f))*x{f}(:,j - 1,k)); end
-                        if j < S, v = v - qx + spm_log(rB{f}(:,:,V(j    ,k,f))*x{f}(:,j + 1,k)); end
+                        if j > 1, v = v - qx + spm_log(sB{f}(:,:,V(j - 1,k,f))*x{f}(:,j - 1,k)); end % Bayesian filtering
+                        if j < S, v = v - qx + spm_log(rB{f}(:,:,V(j    ,k,f))*x{f}(:,j + 1,k)); end % Bayesian smoothing
                         
                         % (negative) expected free energy
                         %--------------------------------------------------
@@ -526,8 +527,8 @@ for t = 1:T
     % accumulate expected free energy of policies (Q)
     %======================================================================
     Q     = zeros(Np,1);
-    for k = p
-        for j = 1:S
+    for k = p % number of policies
+        for j = 1:S % number of time points    
             
             % get expected states for this policy and time point
             %--------------------------------------------------------------
@@ -541,7 +542,7 @@ for t = 1:T
             % Bayesian surprise about states
             %--------------------------------------------------------------
             if ambiguity
-                Q(k) = Q(k) + spm_MDP_G(A,xq);                                      % epistemic value
+                Q(k) = Q(k) + spm_MDP_G(A,xq); % epistemic value - hidden state exploration
             end
             
             for g = 1:Ng
@@ -549,11 +550,11 @@ for t = 1:T
                 % prior preferences about outcomes
                 %----------------------------------------------------------
                 qo   = spm_dot(A{g},xq);
-                Q(k) = Q(k) + qo'*(Vo{g}(:,j));                                 % extrinsic value
+                Q(k) = Q(k) + qo'*(Vo{g}(:,j)); % extrinsic value - reward
                 
                 % Bayesian surprise about parameters
                 %----------------------------------------------------------
-                if isfield(MDP,'a') && curiosity                                % change on and off for curiosiy-driven learning!
+                if isfield(MDP,'a') && curiosity % change on and off for curiosiy-driven learning!
                     Q(k) = Q(k) - spm_dot(wA{g},[qo xq]);
                 end
                 
@@ -582,7 +583,7 @@ for t = 1:T
         
         % posterior and prior beliefs about policies
         %------------------------------------------------------------------
-        qu = spm_softmax(gu(t)*Q(p) + F(p));
+        qu = spm_softmax(gu(t)*Q(p) + F(p)); 
         pu = spm_softmax(gu(t)*Q(p));
         
         % precision (gu) with free energy gradients (v = -dF/dw)
@@ -590,7 +591,7 @@ for t = 1:T
         if OPTIONS.gamma
             gu(t) = 1/beta;
         else
-            eg    = (qu - pu)'*Q(p);
+            eg    = (qu - pu)'*Q(p);   % beliefs about enacted policy times their value
             dFdg  = qbeta - beta + eg;
             qbeta = qbeta - dFdg/2;
             gu(t) = 1/qbeta;
@@ -764,7 +765,7 @@ if isfield(MDP,'U')
     un(:,(end - Ni + 1):end) = [];
 end
 
-% assemble results and place in NDP structure
+% assemble results and place in MDP structure
 %--------------------------------------------------------------------------
 MDP.T   = T;              % number of belief updates
 MDP.P   = P;              % probability of action at time 1,...,T - 1
