@@ -170,7 +170,7 @@ end
 
 % solve MDP and accumulate log-likelihood
 %--------------------------------------------------------------------------
-MDP   = spm_MDP_VB_X(MDP);
+MDP   = Z_spm_MDP_VB_X(MDP);
 L     = 0;
 for i = 1:numel(Y)
     for j = 1:numel(Y{1})

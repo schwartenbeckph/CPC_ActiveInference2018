@@ -199,7 +199,7 @@ if isfield(MDP,'d')
     for i = 0:n
         if i == 0
             subplot(n_rows,11,23 + i)
-            imagesc(d_fig), colormap(cols), title(sprintf('Start'))
+            imagesc(d_fig), colormap(cols), title(sprintf('Start')), caxis([0,1])
             set(gca, 'YTick', 1), set(gca, 'YTickLabel', {''}), set(gca, 'XTickLabel', {'LR','HR'})
             axis image
         else
