@@ -10,14 +10,10 @@
 clear
 close all
 
-your_path = '';
+% Before you start, you need to add SPM12, the DEM toolbox of SPM12 and the
+% folder, where the practicals live, to your path in Matlab.
 
-addpath(fullfile(your_path,'spm12'))
-addpath(fullfile(your_path,'spm12',filesep,'toolbox',filesep,'DEM'))
-
-addpath(fullfile(your_path,'Practical_ActiveInference'))
-
-%% Set up model structure - again
+%% Set up model structure - again, same as in Practical_I
 
 rng('default')
 
@@ -166,6 +162,19 @@ MDP  = Z_spm_MDP_VB_X(MDP);
 %% 6.2 Invert model and try to recover original parameters:
 %==========================================================================
 
+%--------------------------------------------------------------------------
+% This is the model inversion part. Model inversion is based on variational
+% Bayes. The basic idea is to maximise (negative) variational free energy
+% wrt to the free parameters (here: alpha and cr). This means maximising
+% the likelihood of the data under these parameters (i.e., maximise
+% accuracy) and at the same time penalising for strong deviations from the
+% priors over the parameters (i.e., minimise complexity), which prevents
+% overfitting.
+% 
+% You can specify the prior mean and variance of each parameter at the
+% beginning of the Z_spm_dcm_mdp script.
+%--------------------------------------------------------------------------
+
 DCM.MDP   = mdp;                  % MDP model
 DCM.field = {'alpha','cr'};       % parameter (field) names to optimise
 DCM.U     = {MDP.o};              % trial specification (stimuli)
@@ -181,13 +190,15 @@ xticklabels(DCM.field),xlabel('Parameter')
 %% 6.3 Check deviation of prior and posterior means & posterior covariance:
 %==========================================================================
 
+%--------------------------------------------------------------------------
 % re-transform values and compare prior with posterior estimates
 %--------------------------------------------------------------------------
+
 field = fieldnames(DCM.M.pE);
 for i = 1:length(field)
     if strcmp(field{i},'eta')
         prior(i) = 1/(1+exp(-DCM.M.pE.(field{i})));
-        posterior(i) = 1/(1+exp(-DCM.Ep.(field{i})));
+        posterior(i) = 1/(1+exp(-DCM.Ep.(field{i}))); 
     else
         prior(i) = exp(DCM.M.pE.(field{i}));
         posterior(i) = exp(DCM.Ep.(field{i}));
@@ -208,8 +219,7 @@ set(gca, 'XTick', 1:length(prior)),set(gca, 'XTickLabel', DCM.field)
 set(gca, 'YTick', 1:length(prior)),set(gca, 'YTickLabel', DCM.field)
  
 
-%% 7. Now repeat using subsets of trials to illustrate effects on estimators 
-% - design optimisation!
+%% 7. Now repeat using subsets of trials to illustrate effects on estimators - design optimisation!
 %==========================================================================
 %==========================================================================
 
@@ -300,6 +310,10 @@ end
 %==========================================================================
 %==========================================================================
 
+%--------------------------------------------------------------------------
+% Invert models of all 16 subjects - this will take a bit of time
+%--------------------------------------------------------------------------
+
 GCM  = Z_spm_dcm_fit(GCM);
  
 % plot subject specific estimates and true values
@@ -321,7 +335,17 @@ axis square
 %% 10. hierarchical Bayes
 %==========================================================================
 %==========================================================================
- 
+
+%--------------------------------------------------------------------------
+% Using PEB, you can test for the evidence of a 'full' model that assumes a
+% group difference in all parameters and simpler models that assume no
+% differences.
+% 
+% This allows to test for evidence for a difference (or for no difference)
+% in estimated parameters. See relevant literature on these routines, e.g. 
+% Friston, Litvak, Oswal, Razi, Stephan, van Wijk, Ziegler, & Zeidman, 2016
+%--------------------------------------------------------------------------
+
 % second level model
 %--------------------------------------------------------------------------
 M    = struct('X',X);
@@ -342,6 +366,11 @@ subplot(3,2,6), set(gca,'XTickLabel',DCM.field), ylim([0,1.2])
 %% 11. posterior predictive density and cross validation
 %==========================================================================
 %==========================================================================
+
+%--------------------------------------------------------------------------
+% This is leave-one-out crossvalidation to test whether the estimated
+% parameter can be used to infer group membership.
+%--------------------------------------------------------------------------
 
 spm_dcm_loo(GCM,M,'alpha');
 

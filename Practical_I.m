@@ -11,12 +11,8 @@
 clear
 close all
 
-your_path = '';
-
-addpath(fullfile(your_path,'spm12'))
-addpath(fullfile(your_path,'spm12',filesep,'toolbox',filesep,'DEM'))
-
-addpath(fullfile(your_path,'Practical_ActiveInference'))
+% Before you start, you need to add SPM12, the DEM toolbox of SPM12 and the
+% folder, where the practicals live, to your path in Matlab.
 
 %--------------------------------------------------------------------------
 % This routine uses a Markov decision process formulation of active
@@ -163,7 +159,7 @@ C{1}  = [0 cs cr -cs 0 0]';
 % in one of these states at the start of the experiment. 
 % This vector will be normalised in the routine.
 %--------------------------------------------------------------------------
-D{1}  = kron([1/4 0 0 0],[1 1])';
+D{1}  = kron([1/2 0 0 0],[1 1])';
 
 %% 1.4 Allowable policies (of depth T).  These are sequences of actions
 %==========================================================================
@@ -193,7 +189,7 @@ mdp.A = A;                    % observation model
 mdp.B = B;                    % transition probabilities
 mdp.C = C;                    % preferred states
 mdp.D = D;                    % prior over initial states
-mdp.s = 1;                    % initial state
+mdp.s = 1;                    % initial state (1 == high reward context, 2 == low reward context)
 
 mdp.eta = 0.5;                % learning rate
 
@@ -225,8 +221,8 @@ i         = rand(1,n) > 1/2;  % randomise hidden states over trials
 
 MDP       = mdp;
  
-[MDP(1:n)] = deal(MDP);
-[MDP(i).s] = deal(2);
+[MDP(1:n)] = deal(MDP); % replicate mdp structure over trials
+[MDP(i).s] = deal(2); % randomise initial state
 
 [MDP(1:n).alpha] = deal(16);               % precision of action selection
 
@@ -259,8 +255,8 @@ i         = rand(1,n) > 1/2;  % randomise hidden states over trials
 
 MDP       = mdp;
  
-[MDP(1:n)] = deal(MDP);
-[MDP(i).s] = deal(2);
+[MDP(1:n)] = deal(MDP); % replicate mdp structure over trials
+[MDP(i).s] = deal(2); % randomise initial state
 
 [MDP(1:n).alpha] = deal(16);               % precision of action selection
 
@@ -287,8 +283,8 @@ i         = rand(1,n) > 1/2;  % randomise hidden states over trials
 
 MDP       = mdp;
  
-[MDP(1:n)] = deal(MDP);
-[MDP(i).s] = deal(2);
+[MDP(1:n)] = deal(MDP); % replicate mdp structure over trials
+[MDP(i).s] = deal(2); % randomise initial state
 
 [MDP(1:n).alpha] = deal(2);               % precision of action selection
 
@@ -319,8 +315,8 @@ n         = 32;               % number of trials
 
 MDP       = mdp;
  
-[MDP(1:n)]    = deal(MDP);
-[MDP(1:n).d]  = deal(mdp.D);
+[MDP(1:n)]    = deal(MDP); % replicate mdp structure over trials
+[MDP(1:n).d]  = deal(mdp.D); % allow for learning of beliefs about hidden states
 
 [MDP(1:n).alpha] = deal(16);               % precision of action selection
 
@@ -328,8 +324,8 @@ MDP  = Z_spm_MDP_VB_X(MDP);
 
 % illustrate behavioural responses – single trial
 %--------------------------------------------------------------------------
-% spm_figure('GetWin','Figure 1a'); clf
-% Z_spm_MDP_VB_trial(MDP(1));
+spm_figure('GetWin','Figure 1a'); clf
+Z_spm_MDP_VB_trial(MDP(1));
 
 % illustrate behavioural responses over trials
 %--------------------------------------------------------------------------
@@ -344,8 +340,8 @@ n         = 32;               % number of trials
 
 MDP       = mdp;
  
-[MDP(1:n)]    = deal(MDP);
-[MDP(1:n).d]  = deal(mdp.D);
+[MDP(1:n)]    = deal(MDP); % replicate mdp structure over trials
+[MDP(1:n).d]  = deal(mdp.D); % allow for learning of beliefs about hidden states
 
 [MDP(1:n).alpha] = deal(16);               % precision of action selection
 
@@ -371,8 +367,8 @@ n         = 32;               % number of trials
 
 MDP       = mdp;
  
-[MDP(1:n)] = deal(MDP);
-[MDP(1:n).d]  = deal(mdp.D);
+[MDP(1:n)] = deal(MDP); % replicate mdp structure over trials
+[MDP(1:n).d]  = deal(mdp.D); % allow for learning of beliefs about hidden states
 
 [MDP(1:n).alpha] = deal(2);                % precision of action selection
 
@@ -405,8 +401,8 @@ n         = 32;               % number of trials
 
 MDP       = mdp;
  
-[MDP(1:n)]    = deal(MDP);
-[MDP(1:n).d]  = deal(mdp.D);
+[MDP(1:n)]    = deal(MDP); % replicate mdp structure over trials
+[MDP(1:n).d]  = deal(mdp.D); % allow for learning of beliefs about hidden states
 
 [MDP(1:n).alpha] = deal(16);               % precision of action selection
 
@@ -423,8 +419,8 @@ n         = 32;               % number of trials
 
 MDP       = mdp;
  
-[MDP(1:n)]    = deal(MDP);
-[MDP(1:n).d]  = deal(mdp.D);
+[MDP(1:n)]    = deal(MDP); % replicate mdp structure over trials
+[MDP(1:n).d]  = deal(mdp.D); % allow for learning of beliefs about hidden states
 
 [MDP(1:n).alpha] = deal(16);               % precision of action selection
 
@@ -444,8 +440,8 @@ i         = rand(1,n) > 1/2;  % randomise hidden states over trials
 
 MDP       = mdp;
  
-[MDP(1:n)] = deal(MDP);
-[MDP(i).s] = deal(2);
+[MDP(1:n)] = deal(MDP); % replicate mdp structure over trials
+[MDP(i).s] = deal(2); % randomise initial state
 
 [MDP(1:n).alpha] = deal(16);               % precision of action selection
 
@@ -463,8 +459,8 @@ i         = rand(1,n) > 1/2;  % randomise hidden states over trials
 
 MDP       = mdp;
  
-[MDP(1:n)] = deal(MDP);
-[MDP(i).s] = deal(2);
+[MDP(1:n)] = deal(MDP); % replicate mdp structure over trials
+[MDP(i).s] = deal(2); % randomise initial state
 
 [MDP(1:n).alpha] = deal(16);               % precision of action selection
 

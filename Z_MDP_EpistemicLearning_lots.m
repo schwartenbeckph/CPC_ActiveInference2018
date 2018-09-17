@@ -31,13 +31,16 @@ MDP        = mdp;
 %--------------------------------------------------------------------------
 MDP  = Z_spm_MDP_VB_X(MDP);
 
-choice_prob = extractfield(MDP, 'P'); choice_prob = reshape(choice_prob,3,length(choice_prob)/3);
-prob_risky = choice_prob(3,:);
+for i = 1:size(MDP,2)
+    prob_risky(i) = MDP(i).P(3,1);
+end
 
 Prob_risky = [Prob_risky;prob_risky'];
 
-reward      = extractfield(MDP, 'o'); reward = reshape(reward,2,length(reward)/2); 
-reward      = reward(2,:);
+for i = 1:size(MDP,2)
+    reward(i) = MDP(i).o(2);
+end
+
 reward(reward==2) = 1;
 reward(reward==4) = 0;
 reward(reward==3) = 4;
@@ -46,13 +49,9 @@ Reward = [Reward;reward'];
 
 if isfield(MDP,'a')
     
-    a = extractfield(MDP, 'a');
-    a_HR = zeros(1,n);
-    a_NR = zeros(1,n);
-
-    for i = 1:n
-        a_HR(i) = a{i}{1}(3,3);
-        a_NR(i) = a{i}{1}(4,3);
+    for i = 1:size(MDP,2)
+        a_HR(i) = MDP(i).a{1}(3,3);
+        a_NR(i) = MDP(i).a{1}(4,3);
     end
 
     A_HR = [A_HR; a_HR'];

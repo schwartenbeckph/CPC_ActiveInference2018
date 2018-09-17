@@ -31,19 +31,17 @@ MDP        = mdp;
 %--------------------------------------------------------------------------
 MDP  = Z_spm_MDP_VB_X(MDP);
 
-choice_prob = extractfield(MDP, 'P'); choice_prob = reshape(choice_prob,4,length(choice_prob)/4); choice_prob(:,2:2:n*2) = [];
-prob_cue = choice_prob(4,:);
+for i = 1:size(MDP,2)
+    prob_cue(i) = MDP(i).P(4,1);
+end
 
 Prob_cue = [Prob_cue;prob_cue'];
 
 if isfield(MDP,'d')
-    d = extractfield(MDP, 'd');
-    d_HR = zeros(1,n);
-    d_LR = zeros(1,n);
-
-    for i = 1:n
-        d_HR(i) = d{i}{1}(1);
-        d_LR(i) = d{i}{1}(2);
+    
+    for i = 1:size(MDP,2)
+        d_HR(i) = MDP(i).d{1}(1);
+        d_LR(i) = MDP(i).d{1}(2);
     end
 
     D_HR = [D_HR; d_HR'];
@@ -52,8 +50,10 @@ if isfield(MDP,'d')
 end
 
 % Obtained reward - 1 pellet in safe option, 0/4 pellets in risky option
-reward      = extractfield(MDP, 'o'); reward = reshape(reward,3,length(reward)/3); 
-reward      = reward(3,:);
+for i = 1:size(MDP,2)
+    reward(i) = MDP(i).o(3);
+end
+
 reward(reward==1) = 0;
 reward(reward==5) = 0;
 reward(reward==6) = 0;
