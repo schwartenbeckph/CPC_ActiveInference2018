@@ -2,7 +2,7 @@
 
 Active Inference Tutorial from the Computational Psychiatry Conference in Zurich 2018 (http://www.translationalneuromodeling.org/cpcourse/)
 
-This tutorial containts three parts ('Practical_*' I to III) plus some auxiliary SPM-functions that were adjusted for these particular examples (mainly to adjust the figures). Only other requirement to run the code in Matlab is SPM12 and particularly the DEM toolbox of SPM.
+This tutorial containts three parts ('Practical_*' I to III) plus some auxiliary SPM-functions that were adjusted for these particular examples (mainly adjusting some of the figures). The only other requirement to run the code in Matlab is SPM12 and particularly the DEM toolbox of SPM.
 
 Practical_I.m illustrates how to implement a task as active inference, where an agent has to solve the trade-off between gaining information about the world and maximising reward. This information-gain refers to 'hidden state exploration', which allows agents to perform accurate inference about the current hidden state (context). Practical_I_Solutions.m contains some additional tasks that explore the role of different parts of the computational architecture in modelling behaviour of this task, such as an agent's prior preferences, learning rate or precision.
 
