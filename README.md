@@ -10,4 +10,6 @@ Practical_II.m illustrates model inversion (parameter estimation) based on simul
 
 Practical_III.m illustrates a second task with a different type of information-gain, namely 'model-parameter exploration', where an agent performs goal-directed exploration to decrease uncertainty about a particular option and thus perform active learning. 
 
+The background and the different examples are also discussed and introduced in Practical_ActiveInference.pdf
+
 Practical_I.m and Practical_III.m also reproduce some of the simulations discussed here: https://www.biorxiv.org/content/early/2018/09/07/411272, which discusses the distinction between active inference and active learning in more detail. 
